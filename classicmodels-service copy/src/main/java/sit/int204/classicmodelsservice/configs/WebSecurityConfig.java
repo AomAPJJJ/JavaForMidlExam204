@@ -1,5 +1,4 @@
-package sit.int204.classicmodelsservice;
-
+package sit.int204.classicmodelsservice.configs;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -21,30 +20,28 @@ import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
-class WebSecurityConfig {
+
+public class WebSecurityConfig {
     @Autowired
-    private JwtUserDetailsService jwtUserDetailsService;
+    JwtAuthFilter jwtAuthFilter;
     @Autowired
-    private JwtAuthFilter jwtAuthFilter;
+    JwtUserDetailsService jwtUserDetailsService;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.csrf(csrf -> csrf.disable())
-                .authorizeRequests
-                        (authorize -> authorize.requestMatchers("/authentications/login").permitAll()
+        httpSecurity.csrf(csrf -> csrf.disable()).authorizeRequests(
+                authorize -> authorize.requestMatchers("/authentications/login").permitAll()
                         .requestMatchers("/authentications/validate-token").hasAuthority("ADMIN")
+                        .requestMatchers("/api/offices/**").hasAnyAuthority("MANAGER","BA")
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .httpBasic(withDefaults());
         return httpSecurity.build();
     }
-
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8();
     }
-
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
@@ -52,9 +49,7 @@ class WebSecurityConfig {
         authenticationProvider.setPasswordEncoder(passwordEncoder());
         return authenticationProvider;
     }
-
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
-    }
+        return config.getAuthenticationManager(); }
 }

@@ -1,28 +1,30 @@
-package sit.int204.classicmodelsservice.exeptions;
+package sit.int204.classicmodelsservice.exceptions;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
 @Getter
 @Setter
+@Data
 @RequiredArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_NULL) //cแปลงเป็น json ให้เอาฟิลด์ที่ไม่เป็น null
+
 public class ErrorResponse {
-    private final int status;
-    private final String message;
-    private final String instance;
+    private final int status; //constructor
+    private final String message; //constructor
+    private final String instance; //constructor
     private String stackTrace;
     private List<ValidationError> errors;
+
     @Getter
     @Setter
-    @RequiredArgsConstructor
-    private static class ValidationError {
+    @Data
+    @RequiredArgsConstructor // มี constructor(final) เปลี่ยนไม่ได้ ต้อง req
+    // final ==> required //
+    private static class ValidationError { //inner class
         private final String field;
         private final String message;
     }

@@ -1,4 +1,5 @@
 package sit.int204.classicmodelsservice.controllers;
+
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,9 @@ import sit.int204.classicmodelsservice.entities.Customer;
 import sit.int204.classicmodelsservice.entities.Order;
 import sit.int204.classicmodelsservice.services.CustomerService;
 import sit.int204.classicmodelsservice.services.ListMapper;
+
 import java.util.List;
+
 @RestController
 @RequestMapping("/customers")
 public class CustomerController {
@@ -21,6 +24,7 @@ public class CustomerController {
     private ModelMapper modelMapper;
     @Autowired
     private ListMapper listMapper;
+
     @GetMapping("")
     public ResponseEntity<Object> getAllCustomers(
             @RequestParam(defaultValue = "false") boolean pageable,
@@ -28,11 +32,12 @@ public class CustomerController {
             @RequestParam(defaultValue = "10") int pageSize) {
         if(pageable) {
             Page<Customer> customerPage = service.getCustomers(page, pageSize);
-            return ResponseEntity.ok(listMapper.toPageDTO(customerPage , SimpleCustomerDTO.class));
+            return ResponseEntity.ok(listMapper.toPageDTO(customerPage, SimpleCustomerDTO.class));
         } else {
             return ResponseEntity.ok(listMapper.mapList(service.getCustomers(), SimpleCustomerDTO.class));
         }
     }
+
     @GetMapping("/{id}/orders")
     public List<Order> getCustomerOrder(@PathVariable Integer id) {
         System.out.println("id = "+ id);
@@ -44,10 +49,12 @@ public class CustomerController {
         SimpleCustomerDTO simpleCustomer = modelMapper.map(customer, SimpleCustomerDTO.class);
         return ResponseEntity.ok(simpleCustomer);
     }
+
     @GetMapping("/Employee")
     public List<NewCustomerDto> getCustomers() {
         return service.getAllCustomers();
     }
+
     @PostMapping("")
     public NewCustomerDto createCustomer(@Valid @RequestBody NewCustomerDto newCustomer) {
         return service.createCustomer(newCustomer);

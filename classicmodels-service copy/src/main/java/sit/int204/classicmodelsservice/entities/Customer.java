@@ -12,30 +12,17 @@ import java.util.List;
 @Table(name = "customers")
 public class Customer {
     @Id
-
     private Integer customerNumber;
-
     private String contactFirstName;
-
     private String contactLastName;
-
     private String customerName;
-
     private String addressLine2;
-  
     private String addressLine1;
-  
     private String phone;
-  
     private String city;
-   
     private String state;
- 
     private String country;
-  
     private String postalCode;
-
-
 
     @ManyToOne
     @JoinColumn(name = "salesRepEmployeeNumber")
@@ -45,6 +32,6 @@ public class Customer {
     @OneToMany(mappedBy = "customerNumber")
     private List<Order> orderList;
 
-    private  String password;
-    private  String role;
+    private String password;
+    private String role;
 }

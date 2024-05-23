@@ -16,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 import sit.int204.classicmodelsservice.dtos.JwtRequestUser;
 import sit.int204.classicmodelsservice.services.JwtTokenUtil;
 import sit.int204.classicmodelsservice.services.JwtUserDetailsService;
+
 @RestController
 @RequestMapping("/authentications")
 public class AuthenticationController {
@@ -25,15 +26,16 @@ public class AuthenticationController {
     JwtTokenUtil jwtTokenUtil;
     @Autowired
     AuthenticationManager authenticationManager;
+
     @PostMapping("/login")
     public ResponseEntity<Object> login(@RequestBody @Valid JwtRequestUser jwtRequestUser) {
         UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(jwtRequestUser.getUserName() , jwtRequestUser.getPassword());
+                new UsernamePasswordAuthenticationToken(jwtRequestUser.getUserName(), jwtRequestUser.getPassword());
         Authentication authentication = authenticationManager.authenticate(authenticationToken);
-     //   UserDetails userDetails = jwtUserDetailsService.loadUserByUsername(jwtRequestUser.getUserName());
-//        if(!authentication.isAuthenticated()){
-//            throw  new UsernameNotFoundException("Invalid user or password");
-//        }
+        //UserDetails userDetails = jwtUserDetailsService.loadUserByUsername(jwtRequestUser.getUserName());
+        if (! authentication.isAuthenticated()){
+            throw new UsernameNotFoundException("Invalid user or password");
+        }
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String token = jwtTokenUtil.generateToken(userDetails);
         return ResponseEntity.ok(token);

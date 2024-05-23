@@ -1,8 +1,7 @@
 package sit.int204.classicmodelsservice.controllers;
 
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,23 +13,22 @@ import sit.int204.classicmodelsservice.services.FileService;
 @RequestMapping("/files")
 public class FileController {
     @Autowired
-
     FileStorageProperties fileStorageProperties;
-
     @Autowired
     FileService fileService;
 
     @GetMapping("/test")
-    public ResponseEntity<Object>testPropertiesMapping(){
-        return  ResponseEntity.ok(fileService.getFileStorageLocation()+
-                "has been created !!!");
+    public ResponseEntity<Object> testPropertiesMapping() {
+        return ResponseEntity.ok("Upload Folder (Directory) is \"" + fileStorageProperties.getUploadDir()
+                + "\n" +"Host Name is \"" + fileStorageProperties.getFileServiceHostName()+ "\""
+                + "\n" + fileService.getFileStorageLocation() + " has been created !!!");
     }
+
     @PostMapping("")
     public ResponseEntity<Object> fileUpload(@RequestParam("file") MultipartFile file) {
         fileService.store(file);
-        return ResponseEntity.ok("You successfully uploaded " + file.getOriginalFilename());
+        return ResponseEntity.ok("You successfully uploaded" + file.getOriginalFilename());
     }
-
 
     @GetMapping("/{filename:.+}")
     @ResponseBody
@@ -44,20 +42,19 @@ public class FileController {
             case ".png":
                 return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).body(file);
             case ".jpeg":
+            case ".jpg":
                 return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(file);
             case ".gif":
             case ".jfif":
                 return ResponseEntity.ok().contentType(MediaType.IMAGE_GIF).body(file);
-
             default:
-                return ResponseEntity.ok().contentType(MediaType.ALL).body(file);
+                return ResponseEntity.ok().contentType(MediaType.ALL).body(file); //ต้องเช็ค file type
         }
     }
-    @DeleteMapping ("/{filename:.+}")
+    @DeleteMapping("/{filename:.+}")
     @ResponseBody
     public ResponseEntity<String> removeFile(@PathVariable String filename) {
         fileService.removeResource(filename);
-        return ResponseEntity.ok(filename + "has been delete!!!");
+        return ResponseEntity.ok(filename + "has been delete !!!");
     }
-
 }

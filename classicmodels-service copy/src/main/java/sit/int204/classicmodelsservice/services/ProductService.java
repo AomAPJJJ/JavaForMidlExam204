@@ -1,23 +1,44 @@
 package sit.int204.classicmodelsservice.services;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
+import sit.int204.classicmodelsservice.dtos.VerySimpleProductDTO;
 import sit.int204.classicmodelsservice.entities.Product;
-import sit.int204.classicmodelsservice.exeptions.ItemNotFoundException;
+import sit.int204.classicmodelsservice.exceptions.ItemNotFoundException;
 import sit.int204.classicmodelsservice.repositories.ProductRepository;
 
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.springframework.data.domain.ExampleMatcher.GenericPropertyMatchers.ignoreCase;
+
 @Service
 public class ProductService {
     @Autowired
     ProductRepository repository;
+//    @Autowired
+//    ModelMapper modelMapper;
+//    @Autowired
+//    ListMapper listMapper;
+
+    // hard code
+    // เอาไว้เขียน query ง่าย ๆ
+    public List<Product> getProductByExample() {
+        Product productExample = new Product();
+        productExample.setProductLine("Classic Cars");
+        productExample.setProductDescription(("classic"));
+        productExample.setProductName("honda");
+        productExample.setProductVendor("Gearbox Collectibles");
+        ExampleMatcher matcher = ExampleMatcher.matchingAny()
+                                .withMatcher("productName", ignoreCase().contains())
+                                .withMatcher("productDescription", ignoreCase().contains())
+                                .withMatcher("productVendor", ignoreCase().contains());
+        List<Product> productList = repository.findAll(Example.of(productExample, matcher));
+        return productList;
+    }
 
     public Page<Product> getProducts(String partOfProduct, Double lower, Double upper,
                                      String[] sortBy, String[] direction, int pageNo, int pageSize) {
@@ -65,7 +86,6 @@ public class ProductService {
             return repository.findByPriceBetweenAndProductNameContains(lower, upper, partOfProduct);
         }
     }
-
         public List<Product> getProducts(String partOfProduct, Double lower, Double upper){
         return getProducts(partOfProduct, lower, upper, null, null);
     }
@@ -75,7 +95,10 @@ public class ProductService {
         return repository.getProductsByCategory(category + "%");
     }
     public Product getProductById(String productCode) {
-      return    repository.findById(productCode).orElseThrow(()->
-                new ItemNotFoundException("Product code: "+ productCode + " does not exists !!!"));
+        return repository.findById(productCode).orElseThrow( () ->
+                new ItemNotFoundException("Product code: "+
+                    productCode + " does not exists !!!"));
     }
+
+
 }

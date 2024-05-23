@@ -9,12 +9,10 @@ import sit.int204.classicmodelsservice.services.ListMapper;
 public class ApplicationConfig {
     @Bean
     public ModelMapper modelMapper() {
-
         return new ModelMapper();
     }
     @Bean
     public ListMapper listMapper() {
-
         return ListMapper.getInstance();
     }
 }

@@ -5,9 +5,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import sit.int204.classicmodelsservice.models.Student;
 
-import java.io.File;
-import java.util.Scanner;
-
 @Service
 
 public class StudentGradeService {
@@ -18,5 +15,4 @@ public class StudentGradeService {
         }
         return student.calculateGrade();
     }
-
 }

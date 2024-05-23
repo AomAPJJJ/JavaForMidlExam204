@@ -10,13 +10,17 @@ import org.springframework.web.server.ResponseStatusException;
 import sit.int204.classicmodelsservice.dtos.NewCustomerDto;
 import sit.int204.classicmodelsservice.entities.Customer;
 import sit.int204.classicmodelsservice.repositories.CustomerRepository;
+
 import java.util.List;
+
 @Service
 public class CustomerService {
     @Autowired
     private CustomerRepository repository;
+
     @Autowired
     private ModelMapper mapper;
+
     @Autowired
     private ListMapper listMapper;
     public Customer findByID(Integer id) {
@@ -24,12 +28,15 @@ public class CustomerService {
                 ()->new ResponseStatusException(HttpStatus.NOT_FOUND,
                         "Customer number '"+ id + "' does not exist !!!!"));
     }
+
     public Page<Customer> getCustomers(int page, int size) {
         return repository.findAll(PageRequest.of(page, size));
     }
+
     public List<Customer> getCustomers() {
         return repository.findAll();
     }
+
     public NewCustomerDto createCustomer(NewCustomerDto newCustomer) {
         if(repository.existsById(newCustomer.getCustomerNumber())){
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Duplicate customer for id "+
